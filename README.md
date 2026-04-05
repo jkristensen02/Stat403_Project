@@ -7,7 +7,7 @@ Starch:Water Ratio - 1:6
 Glycerin - ½ tsp 
 Vinegar Amount - 1 tsp 
  
-Experimental Unit: The batch 
+Experimental Unit: The batch\n
 Observational Unit: The 10x10cm films created from the batch 
 Randomization Structure: The order the treatments are ran 
 Design Consideration: Split-plot design 

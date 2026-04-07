@@ -52,6 +52,25 @@ c <- 0.5
 ```{r}
 set.seed(403)
 
-mu <- 
+# Cooking Effect Size: 
+mu <- c(10,-10)
+
+# Drying Effect Size: Because our difference in wait time is large (22 hrs), a difference of only +-20 quarters is considered a significant enough difference. 
+beta <- c(15,-15)
+
+# Interaction Effect Size:
+gamma <- c(15,-15)
+
+reps <- 1:4
+
+for (n in reps){
+  for (i in 1:2){
+    Plot <- Plot + 1
+    WP_err <- rnorm(n = 1, mean = 0, sd = sd_wp)
+  }
+  for (j in 1:2){
+    Yij <- 
+  }
+}
 ```
 

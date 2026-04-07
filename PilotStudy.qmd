@@ -1,5 +1,5 @@
 ---
-title: "PilotStudy"
+title: "Pilot Study"
 format: html
 author: "Julia Kristensen and Ilia Janfeshan"
 ---
@@ -18,7 +18,7 @@ data <- read_csv("pilot.csv")
 
 data$CookingMethod <- factor(data$CookingMethod)
 data$DryingMethod  <- factor(data$DryingMethod)
-data$Replicate <- factor(data$Replicate)
+data$Plot <- factor(data$Plot)
 
 data <- data %>%
   group_by(Plot, DryingMethod, CookingMethod) %>%
@@ -50,42 +50,70 @@ c <- 0.5
 
 ## Choosing effect sizes
 ```{r}
-set.seed(403)
-
-# Cooking Effect Size: 
-mu <- c(10,-10)
-
-# Drying Effect Size: Because our difference in wait time is large (22 hrs), a difference of only +-20 quarters is considered a significant enough difference. 
-beta <- c(15,-15)
-
-# Interaction Effect Size:
-gamma <- rbind(c(15, 20), c(10, ))
-
-reps <- 1:3
-Plot <- 0
-data_sim <- data.frame()
-
-for (n in reps){
-  for (i in 1:2){
-    Plot <- Plot + 1
-    WP_err <- rnorm(n = 1, mean = 0, sd = sd_wp)
-    for (j in 1:2){
-      Y <- mu[i] + beta[j] + gamma[i,j] + WP_err + rnorm(n = 1, mean = 0, sd = sd_sp)
-      data_sim <- rbind(data_sim, data.frame(
-        Replicate = n,
-        Plot = Plot,
-        CookingMethod = factor(i),
-        DryingMethod = factor(j),
-        NumQuarters = Y
-      ))
-    }
-  }
-}
-```
-
-```{r}
 data %>%
   group_by(CookingMethod, DryingMethod) %>%
   summarise(NumQuarters = mean(NumQuarters), .groups = "drop")
+
+grand_mean <- mean(data$NumQuarters)
 ```
+
+
+```{r}
+# Cooking Effect Size: 
+mu <- c(2.5,-2.5)
+
+# Drying Effect Size: Because our difference in wait time is large (22 hrs), a difference of only +-10 quarters is considered a significant enough difference. 
+beta <- c(-10,10)
+
+# Interaction Effect Size:
+gamma <- matrix(c(5, -5,
+                  -5, 5), nrow = 2, byrow = TRUE)
+
+rep <- 1:3
+Plot <- 0
+data_sim <- data.frame()
+counterCM <- 0
+counterDM <- 0 
+runs <- 1000
+
+for (r in 1:runs){
+  data_sim <- data.frame()
+  Plot <- 0
+  
+  for (n in reps){
+    
+    for (i in 1:2){
+      Plot <- Plot + 1
+      WP_err <- rnorm(n = 1, mean = 0, sd = sd_wp)
+      
+      for (j in 1:2){
+        Y <- grand_mean + mu[i] + beta[j] + gamma[i,j] + WP_err + rnorm(n = 1, mean = 0, sd = sd_sp)
+        data_sim <- rbind(data_sim, data.frame(
+          Plot = Plot,
+          CookingMethod = factor(i),
+          DryingMethod = factor(j),
+          NumQuarters = Y
+        ))
+      }
+    }
+  }
+    
+    myModel <- lmer(NumQuarters ~ CookingMethod * DryingMethod + 
+                      (1 | Plot), data_sim)
+    
+    anov <- anova(myModel)
+    pval <- anov$`Pr(>F)`
+    del <- (pval < 0.05)
+    
+    if (del[1] + del[3] > 0)
+      counterCM <- counterCM + 1
+    if (del[2] + del[3] > 0)
+      counterDM <- counterDM + 1
+}
+
+(counterCM / runs)
+(counterDM / runs)
+```
+
+
 

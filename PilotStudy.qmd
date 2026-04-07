@@ -59,6 +59,7 @@ grand_mean <- mean(data$NumQuarters)
 
 
 ```{r}
+#| message: false
 # Cooking Effect Size: 
 mu <- c(2.5,-2.5)
 
@@ -69,52 +70,57 @@ beta <- c(-10,10)
 gamma <- matrix(c(5, -5,
                   -5, 5), nrow = 2, byrow = TRUE)
 
-rep <- 1:3
-Plot <- 0
-data_sim <- data.frame()
-counterCM <- 0
-counterDM <- 0 
 runs <- 1000
 
-for (r in 1:runs){
-  data_sim <- data.frame()
-  Plot <- 0
+power <- matrix(NA, nrow = 3, ncol = 2)
+colnames(power) <- c("CookingMethod", "DryingMethod")
+rownames(power) <- c("3", "4", "5")
+
+for (k in 3:5) {
+  counterCM <- 0
+  counterDM <- 0 
   
-  for (n in reps){
+  for (r in 1:runs){
+    data_sim <- data.frame()
+    Plot <- 0
     
-    for (i in 1:2){
-      Plot <- Plot + 1
-      WP_err <- rnorm(n = 1, mean = 0, sd = sd_wp)
+    for (n in 1:k){
       
-      for (j in 1:2){
-        Y <- grand_mean + mu[i] + beta[j] + gamma[i,j] + WP_err + rnorm(n = 1, mean = 0, sd = sd_sp)
-        data_sim <- rbind(data_sim, data.frame(
-          Plot = Plot,
-          CookingMethod = factor(i),
-          DryingMethod = factor(j),
-          NumQuarters = Y
-        ))
+      for (i in 1:2){
+        Plot <- Plot + 1
+        WP_err <- rnorm(n = 1, mean = 0, sd = sd_wp)
+        
+        for (j in 1:2){
+          Y <- grand_mean + mu[i] + beta[j] + gamma[i,j] + 
+            WP_err + rnorm(n = 1, mean = 0, sd = sd_sp)
+          
+          data_sim <- rbind(data_sim, data.frame(
+            Plot = Plot,
+            CookingMethod = factor(i),
+            DryingMethod = factor(j),
+            NumQuarters = Y
+          ))
+        }
       }
     }
+      
+      myModel <- lmer(NumQuarters ~ CookingMethod * DryingMethod + 
+                        (1 | Plot), data_sim)
+      
+      anov <- anova(myModel)
+      pval <- anov$`Pr(>F)`
+      del <- (pval < 0.05)
+      
+      if (del[1] + del[3] > 0)
+        counterCM <- counterCM + 1
+      if (del[2] + del[3] > 0)
+        counterDM <- counterDM + 1
   }
-    
-    myModel <- lmer(NumQuarters ~ CookingMethod * DryingMethod + 
-                      (1 | Plot), data_sim)
-    
-    anov <- anova(myModel)
-    pval <- anov$`Pr(>F)`
-    del <- (pval < 0.05)
-    
-    if (del[1] + del[3] > 0)
-      counterCM <- counterCM + 1
-    if (del[2] + del[3] > 0)
-      counterDM <- counterDM + 1
+  power[k-2, 1] <- counterCM / runs
+  power[k-2, 2] <- counterDM / runs
 }
 
-(counterCM / runs)
-(counterDM / runs)
-
-
+power
 ```
 
 

@@ -62,7 +62,7 @@ grand_mean <- mean(data$NumQuarters)
 # Cooking Effect Size: 
 mu <- c(2.5,-2.5)
 
-# Drying Effect Size: Because our difference in wait time is large (22 hrs), a difference of only +-10 quarters is considered a significant enough difference. 
+# Drying Effect Size: Because our difference in wait time is large (22 hrs), a difference of only +-10 quarters is considered a significant enough difference.
 beta <- c(-10,10)
 
 # Interaction Effect Size:

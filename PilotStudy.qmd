@@ -4,7 +4,7 @@ format: html
 author: "Julia Kristensen and Ilia Janfeshan"
 ---
 
-# Libraries and Reading Data
+## Libraries and Reading Data
 ```{r}
 #| echo: false
 #| warning: false
@@ -12,7 +12,8 @@ author: "Julia Kristensen and Ilia Janfeshan"
 
 library(tidyverse)
 library(dplyr)
-library(lme4)
+library(lmerTest) 
+# Used lmerTest instead of lme4 because lmerTest approximates p-values, whereas lme4 does not.
 
 data <- read_csv("pilot.csv")
 
@@ -60,6 +61,7 @@ grand_mean <- mean(data$NumQuarters)
 
 ```{r}
 #| message: false
+
 # Cooking Effect Size: 
 mu <- c(2.5,-2.5)
 

@@ -119,7 +119,6 @@ for (k in 3:5) {
   power[k-2, 1] <- counterCM / runs
   power[k-2, 2] <- counterDM / runs
 }
-
 power
 ```
 

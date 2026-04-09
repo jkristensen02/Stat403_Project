@@ -62,22 +62,22 @@ grand_mean <- mean(data$NumQuarters)
 #| message: false
 
 # Cooking Effect Size: 
-mu <- c(2.5,-2.5)
+mu <- c(5,-5)
 
-# Drying Effect Size: Because our difference in wait time is large (22 hrs), a difference of only +-10 quarters is considered a significant enough difference.
-beta <- c(-10,10)
+# Drying Effect Size: Because our difference in wait time is large (22 hrs), a difference of only 10 quarters is considered a significant enough difference.
+beta <- c(-5,5)
 
 # Interaction Effect Size:
-gamma <- matrix(c(5, -5,
-                  -5, 5), nrow = 2, byrow = TRUE)
+gamma <- matrix(c(0, -0,
+                  -1, 1), nrow = 2, byrow = TRUE)
 
 runs <- 1000
 
 power <- matrix(NA, nrow = 3, ncol = 2)
 colnames(power) <- c("CookingMethod", "DryingMethod")
-rownames(power) <- c("3", "4", "5")
+rownames(power) <- c("4", "5", "6")
 
-for (k in 3:5) {
+for (k in 4:6) {
   counterCM <- 0
   counterDM <- 0 
   

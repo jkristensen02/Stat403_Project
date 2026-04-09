@@ -65,7 +65,7 @@ grand_mean <- mean(data$NumQuarters)
 mu <- c(5,-5)
 
 # Drying Effect Size: 
-beta <- c(-5,5)
+beta <- c(-4,4)
 
 # Interaction Effect Size:
 gamma <- matrix(c(0, -0,

@@ -69,7 +69,7 @@ beta <- c(-5,5)
 
 # Interaction Effect Size:
 gamma <- matrix(c(0, -0,
-                  -1, 1), nrow = 2, byrow = TRUE)
+                  -2.5, 2.5), nrow = 2, byrow = TRUE)
 
 runs <- 1000
 

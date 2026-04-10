@@ -2,9 +2,10 @@
 title: "Experiment"
 author: "Julia Kristensen and Ilia Janfeshan"
 format: html
-editor: visual
 ---
+
 ## Libraries and Reading Data
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -26,6 +27,7 @@ data_mean <- data %>%
 ```
 
 ## Fitting the model
+
 ```{r}
 fit <- lmer(NumQuarters ~ CookingMethod * DryingMethod + (1 | Plot), data = data_mean)
 ```
@@ -33,6 +35,7 @@ fit <- lmer(NumQuarters ~ CookingMethod * DryingMethod + (1 | Plot), data = data
 ## Producing plots
 
 ### boxplots
+
 ```{r}
 # by treatment factor
 ggplot(data_mean, aes(x = interaction(CookingMethod, DryingMethod), y = NumQuarters)) +
@@ -50,6 +53,7 @@ ggplot(data_mean, aes(x = DryingMethod, y = NumQuarters)) +
 ```
 
 ### Interaction plot
+
 ```{r}
 interaction.plot(x.factor = data_mean$DryingMethod, trace.factor = data_mean$CookingMethod, response = data_mean$NumQuarters)
 
@@ -57,7 +61,8 @@ interaction.plot(x.factor = data_mean$DryingMethod, trace.factor = data_mean$Coo
 
 ```
 
-###  Residual vs Fitted and Q-Q plot
+### Residual vs Fitted and Q-Q plot
+
 ```{r}
 # res vs Fitted
 plot(fit, which = 1)
@@ -68,32 +73,29 @@ qqline(residuals(fit))
 
 # The residuals versus fitted values plot shows that the residuals are scattered around zero without any clear pattern or systematic structure, which suggests that the assumption of constant variance is reasonably satisfied. While there is slightly more spread among the larger fitted values, it is not severe enough to indicate a strong violation. The Q-Q plot shows that most of the residuals lie close to the reference line, indicating approximate normality. However, there are some noticeable deviations in the lower tail, suggesting a few extreme negative residuals. Overall, the normality assumption is reasonably met, with only minor departures that are not severe enough to invalidate the ANOVA results.
 ```
+
 ## ANOVA model
+
 ```{r}
 (a <- anova(fit))
 ```
+
 An analysis of variance (ANOVA) was conducted to evaluate the effects of Cooking Method, Drying Method, and their interaction on the number of quarters.
 
-Interaction
-H₀: There is no interaction between Cooking Method and Drying Method
-H₁: There is an interaction between Cooking Method and Drying Method
+Interaction H₀: There is no interaction between Cooking Method and Drying Method H₁: There is an interaction between Cooking Method and Drying Method
 
-Cooking Method (main effect)
-H₀: Mean response is the same for all cooking methods
-H₁: At least one cooking method differs
+Cooking Method (main effect) H₀: Mean response is the same for all cooking methods H₁: At least one cooking method differs
 
-Drying Method (main effect)
-H₀: Mean response is the same for all drying methods
-H₁: At least one drying method differs
+Drying Method (main effect) H₀: Mean response is the same for all drying methods H₁: At least one drying method differs
 
-The interaction between Cooking Method and Drying Method was found to be statistically significant (F = 5.228, p = _____), indicating that the effect of one factor depends on the level of the other. This suggests that the difference between cooking methods is not consistent across drying methods.
+The interaction between Cooking Method and Drying Method was found to be statistically significant (F = 5.228, p = \_\_\_\_\_), indicating that the effect of one factor depends on the level of the other. This suggests that the difference between cooking methods is not consistent across drying methods.
 
-The main effect of Drying Method was highly significant (F = 123.017, p < 0.001), indicating that drying method has a strong influence on the response, with the Oven method producing substantially higher values than Air.
+The main effect of Drying Method was highly significant (F = 123.017, p \< 0.001), indicating that drying method has a strong influence on the response, with the Oven method producing substantially higher values than Air.
 
 The main effect of Cooking Method was not statistically significant at the 0.05 level (F = 4.019, p = 0.054), although it is close to significance, suggesting a possible but weaker effect compared to Drying Method.
 
-
 ## Comparing treatment means
+
 ```{r}
 data_mean %>%
   group_by(CookingMethod, DryingMethod) %>%
@@ -101,10 +103,11 @@ data_mean %>%
 
 # The treatment means show clear differences between the combinations of Cooking Method and Drying Method. The highest mean response was observed for the Microwave–Oven combination (mean = 28.00), followed by Stove–Oven (mean ≈ 23.92). In contrast, both Air drying treatments produced much lower responses, with Stove–Air (mean = 9.25) and Microwave–Air (mean = 8.75) showing very similar values. These results indicate that the choice of drying method has a strong effect, but the difference between cooking methods depends on the drying method. In particular, Microwave performs better than Stove under Oven drying, while the two methods are nearly indistinguishable under Air drying, which is consistent with the presence of a significant interaction.
 ```
+
 ## Calculating CI
+
 ```{r}
 library(emmeans)
 
 emmeans(fit, ~ CookingMethod * DryingMethod)
 ```
-

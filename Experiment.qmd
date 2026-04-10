@@ -53,18 +53,30 @@ ggplot(data_mean, aes(x = DryingMethod, y = NumQuarters)) +
 ```{r}
 interaction.plot(x.factor = data_mean$DryingMethod, trace.factor = data_mean$CookingMethod, response = data_mean$NumQuarters)
 
-# The interaction plot shows that the lines are roughly parallel, suggesting that any interaction effect is relatively small in magnitude. However, the ANOVA results indicate that the interaction between Cooking Method and Drying Method is statistically significant. This suggests that although the interaction is not visually strong, the effect is consistent enough across observations to be detected statistically.
+# The profile plot shows that the lines corresponding to the two cooking methods are not perfectly parallel, indicating that the effect of Cooking Method changes across levels of Drying Method. This suggests that an interaction exists between Cooking Method and Drying Method, as the difference between cooking methods depends on the drying method used.
 
 ```
 
 ###  Residual vs Fitted and Q-Q plot
 ```{r}
-# res vs Fitted
-plot(fit, which = 1)
+par(mfrow = c(1, 2))
 
-# Q-Q plot
-qqnorm(residuals(fit))
-qqline(residuals(fit))
+# Residuals vs Fitted
+plot(fitted(fit), resid(fit),
+     xlab = "Fitted Values",
+     ylab = "Residuals",
+     main = "Residuals vs Fitted",
+     col = "black")
+
+abline(h = 0, col = "red", lwd = 2)          # horizontal line at 0
+abline(lm(resid(fit) ~ fitted(fit)), 
+       col = "blue", lwd = 2)                # trend line (slope)
+
+# Q-Q Plot
+qqnorm(resid(fit), main = "Normal Q-Q Plot", col = "black")
+qqline(resid(fit), col = "blue", lwd = 2)    # reference line
+
+par(mfrow = c(1, 1))
 
 # The residuals versus fitted values plot shows that the residuals are scattered around zero without any clear pattern or systematic structure, which suggests that the assumption of constant variance is reasonably satisfied. While there is slightly more spread among the larger fitted values, it is not severe enough to indicate a strong violation. The Q-Q plot shows that most of the residuals lie close to the reference line, indicating approximate normality. However, there are some noticeable deviations in the lower tail, suggesting a few extreme negative residuals. Overall, the normality assumption is reasonably met, with only minor departures that are not severe enough to invalidate the ANOVA results.
 ```
@@ -106,5 +118,6 @@ data_mean %>%
 library(emmeans)
 
 emmeans(fit, ~ CookingMethod * DryingMethod)
+# The optimal treatment combination was Microwave with Oven drying, which produced the highest estimated mean response of 28.00 quarters. A 95% confidence interval for this mean is (25.2, 30.8). This interval provides a range of plausible values for the true mean response under the optimal settings and indicates that the performance of this combination is substantially higher than the other treatment combinations.
 ```
 
